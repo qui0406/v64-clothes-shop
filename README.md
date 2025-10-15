@@ -1,1 +1,0 @@
-# v64-clothes-shop
