@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, User, Heart, Search, Menu, X, Grid, List, ChevronRight, Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 
-const ProductListingPage = () => {
+const BagListingPage = () => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
@@ -53,145 +53,65 @@ const ProductListingPage = () => {
   };
 
   const filters = [
-    { id: 'ao-khoac', label: 'ÁO KHOÁC' },
-    { id: 'kieu-nu', label: 'ÁO KIỂU NỮ' },
-    { id: 'so-mi', label: 'ÁO SƠ MI' },
-    { id: 'so-mi-vai', label: 'ÁO SƠ MI VÁI' },
-    { id: 'thun', label: 'ÁO THUN' },
-    { id: 'dam', label: 'ĐẦM' },
-    { id: 'quan-dai', label: 'QUẦN DÀI' },
-    { id: 'quan-lung', label: 'QUẦN LỬNG' },
-    { id: 'quan-ngan', label: 'QUẦN NGẮN' },
-    { id: 'vay', label: 'VÁY' }
+    { id: 'tui-xach', label: 'TÚI XÁCH' },
   ];
 
   const products = [
     {
       id: 1,
-      name: 'Áo Nữ Denim Dáng Rộng Màu Xanh Đậm',
-      englishName: 'Med Blue Denim Blouse For Her',
-      sku: '222WD2016B1950S',
-      price: '432,000₫',
-      originalPrice: '864,000₫',
+      name: 'Túi Da Cao Cấp Màu Đen',
+      englishName: 'Premium Black Leather Bag',
+      sku: 'BAG2025001',
+      price: '1,200,000₫',
+      originalPrice: '2,400,000₫',
       discount: '-50%',
-      stock: 950,
-      image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600&q=80',
-      colors: [{ name: 'MED BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
+      stock: 150,
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+      colors: [{ name: 'BLACK', value: 'black' }],
+      sizes: ['S', 'M', 'L']
     },
     {
       id: 2,
-      name: 'BOOT CUT JEANS',
-      englishName: 'Boot Cut Jeans',
-      sku: 'BCJ2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
+      name: 'Túi Vải Canvas Màu Xanh',
+      englishName: 'Canvas Blue Bag',
+      sku: 'BAG2025002',
+      price: '450,000₫',
+      originalPrice: '600,000₫',
       discount: '-25%',
-      stock: 1200,
-      image: 'https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=600&q=80',
+      stock: 300,
+      image: 'https://images.unsplash.com/photo-1600585154526-990d71b8cc3c?w=600&q=80',
       colors: [{ name: 'BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
+      sizes: ['M', 'L']
     },
     {
       id: 3,
-      name: 'MAXI DRESS',
-      englishName: 'Maxi Dress',
-      sku: 'MD2024001',
-      price: '1,164,000₫',
-      originalPrice: '1,464,000₫',
+      name: 'Balo Đeo Chéo Màu Xám',
+      englishName: 'Gray Crossbody Backpack',
+      sku: 'BAG2025003',
+      price: '800,000₫',
+      originalPrice: '1,000,000₫',
       discount: '-20%',
-      stock: 850,
-      image: 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&q=80',
-      colors: [{ name: 'BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 4,
-      name: 'MINI SKIRT',
-      englishName: 'Mini Skirt',
-      sku: 'MS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 750,
-      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 5,
-      name: 'PLEATED SHORTS',
-      englishName: 'Pleated Shorts',
-      sku: 'PS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 680,
-      image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }, { name: 'BROWN', value: 'brown' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 6,
-      name: 'PLEATED SHORTS',
-      englishName: 'Pleated Shorts',
-      sku: 'PS2024002',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 920,
-      image: 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=600&q=80',
-      colors: [{ name: 'BROWN', value: 'brown' }, { name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 7,
-      name: 'WORKWEAR SHORTS',
-      englishName: 'Workwear Shorts',
-      sku: 'WS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 1050,
-      image: 'https://images.unsplash.com/photo-1591195842757-e21d73e8b3c6?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }, { name: 'BLACK', value: 'black' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 8,
-      name: 'WORKWEAR SHORTS',
-      englishName: 'Workwear Shorts',
-      sku: 'WS2024002',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 870,
-      image: 'https://images.unsplash.com/photo-1591195851234-802ad6fa6845?w=600&q=80',
-      colors: [{ name: 'BLACK', value: 'black' }, { name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
+      stock: 200,
+      image: 'https://images.unsplash.com/photo-1600585154526-990d71b8cc3c?w=600&q=80',
+      colors: [{ name: 'GRAY', value: 'gray' }],
+      sizes: ['M', 'L']
     }
   ];
 
   return (
     <div className="page-container">
-      
-      {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="container">
           <a href="/">Trang chủ</a>
           <span>/</span>
-          <a href="#">Thời Trang Denim/Jeans Nữ</a>
+          <a href="#">Túi Denim</a>
         </div>
       </div>
-
-      {/* Page Title */}
       <div className="page-title">
         <div className="container">
-          <h1>Thời Trang Denim/Jeans Nữ</h1>
+          <h1>Túi Denim</h1>
         </div>
       </div>
-
-      {/* Filters */}
       <div className="filters-section">
         <div className="container">
           <div className="filters-wrapper">
@@ -215,8 +135,6 @@ const ProductListingPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Products Grid */}
       <div className="products-section">
         <div className="container">
           <div className="products-grid">
@@ -227,14 +145,12 @@ const ProductListingPage = () => {
                     <div className="discount-badge">{product.discount}</div>
                   )}
                   <img src={product.image} alt={product.name} className="product-image" />
-                  
                   <button 
                     className={`wishlist-btn ${wishlist.includes(product.id) ? 'active' : ''}`}
                     onClick={() => toggleWishlist(product.id)}
                   >
                     <Heart size={20} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} />
                   </button>
-
                   <div className="product-actions">
                     <button className="action-btn add-to-cart-btn">
                       Thêm vào giỏ
@@ -247,7 +163,6 @@ const ProductListingPage = () => {
                     </button>
                   </div>
                 </div>
-
                 <div className="product-info">
                   <p className="product-price">{product.price}</p>
                   <h3 className="product-name">{product.name}</h3>
@@ -262,21 +177,17 @@ const ProductListingPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Filter Sidebar */}
       {filterSidebarOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFilterSidebarOpen(false)}></div>
           <div className="filter-sidebar">
             <div className="filter-sidebar-header">
-              <h3>Form</h3>
+              <h3>Bộ lọc</h3>
               <button className="filter-close-btn" onClick={() => setFilterSidebarOpen(false)}>
                 <X size={24} />
               </button>
             </div>
-
             <div className="filter-sidebar-body">
-              {/* Price Range Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('price')}>
                   <span>Giá sản phẩm</span>
@@ -287,13 +198,11 @@ const ProductListingPage = () => {
                     <div className="price-inputs">
                       <input type="text" placeholder="0₫" className="price-input" />
                       <span>-</span>
-                      <input type="text" placeholder="2,000,000₫" className="price-input" />
+                      <input type="text" placeholder="2,500,000₫" className="price-input" />
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Size Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('size')}>
                   <span>Size</span>
@@ -301,7 +210,7 @@ const ProductListingPage = () => {
                 </button>
                 {expandedSections.size && (
                   <div className="filter-section-content">
-                    {['S', 'M', 'L', 'XL'].map(size => (
+                    {['S', 'M', 'L'].map(size => (
                       <label key={size} className="filter-checkbox-label">
                         <input type="checkbox" className="filter-checkbox" />
                         <span>{size}</span>
@@ -310,8 +219,6 @@ const ProductListingPage = () => {
                   </div>
                 )}
               </div>
-
-              {/* Category Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('category')}>
                   <span>Chủng Loại</span>
@@ -328,8 +235,6 @@ const ProductListingPage = () => {
                   </div>
                 )}
               </div>
-
-              {/* Color Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('color')}>
                   <span>Sắp xếp</span>
@@ -356,15 +261,12 @@ const ProductListingPage = () => {
           </div>
         </>
       )}
-
-      {/* Quick View Modal */}
       {quickViewProduct && (
         <div className="modal-overlay" onClick={closeQuickView}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closeQuickView}>
               <X size={24} />
             </button>
-            
             <div className="modal-body">
               <div className="modal-image-section">
                 {quickViewProduct.discount && (
@@ -375,37 +277,16 @@ const ProductListingPage = () => {
                   <ChevronRight size={24} />
                 </button>
               </div>
-
               <div className="modal-details-section">
-                <h2 className="modal-title">{quickViewProduct.name}. {quickViewProduct.englishName} - {quickViewProduct.sku}</h2>
-                
+                <h2 className="modal-title">{quickViewProduct.name} - {quickViewProduct.englishName} - {quickViewProduct.sku}</h2>
                 <p className="modal-sku">SKU: {quickViewProduct.sku}</p>
-                
                 <div className="modal-price-section">
                   <span className="modal-price">{quickViewProduct.price}</span>
                   <span className="modal-original-price">{quickViewProduct.originalPrice}</span>
                 </div>
-
                 <div className="modal-stock">
                   <span>Cần bán: {quickViewProduct.stock}</span>
                 </div>
-
-                <div className="modal-size-selector">
-                  <button className="size-selected-btn">
-                    {quickViewProduct.stock}
-                    <div className="size-checkmark"></div>
-                  </button>
-                </div>
-
-                <div className="modal-color-section">
-                  <p className="modal-label">Màu sắc: {quickViewProduct.colors[0].name}</p>
-                  <div className="modal-color-options">
-                    {quickViewProduct.colors.map((color, index) => (
-                      <button key={index} className={`modal-color-swatch ${color.value} ${index === 0 ? 'selected' : ''}`}></button>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="modal-size-section">
                   <p className="modal-label">Kích thước:</p>
                   <div className="modal-size-options">
@@ -421,7 +302,14 @@ const ProductListingPage = () => {
                     ))}
                   </div>
                 </div>
-
+                <div className="modal-color-section">
+                  <p className="modal-label">Màu sắc: {quickViewProduct.colors[0].name}</p>
+                  <div className="modal-color-options">
+                    {quickViewProduct.colors.map((color, index) => (
+                      <button key={index} className={`modal-color-swatch ${color.value} ${index === 0 ? 'selected' : ''}`}></button>
+                    ))}
+                  </div>
+                </div>
                 <div className="modal-actions">
                   <div className="quantity-selector">
                     <button 
@@ -447,14 +335,12 @@ const ProductListingPage = () => {
                     Thêm vào giỏ
                   </button>
                 </div>
-
                 <a href="#" className="modal-view-details">Xem chi tiết »</a>
               </div>
             </div>
           </div>
         </div>
       )}
-
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -751,19 +637,14 @@ const ProductListingPage = () => {
           background: #3b82f6;
         }
 
-        .color-swatch.navy {
-          background: #1e3a8a;
-        }
-
-        .color-swatch.brown {
-          background: #92400e;
-        }
-
         .color-swatch.black {
           background: #1a1a1a;
         }
 
-        /* Filter Sidebar */
+        .color-swatch.gray {
+          background: #9ca3af;
+        }
+
         .filter-overlay {
           position: fixed;
           top: 0;
@@ -903,7 +784,6 @@ const ProductListingPage = () => {
           border-color: #1a1a1a;
         }
 
-        /* Modal Styles */
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -919,11 +799,6 @@ const ProductListingPage = () => {
           animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
         .modal-content {
           background: white;
           border-radius: 16px;
@@ -933,17 +808,6 @@ const ProductListingPage = () => {
           overflow-y: auto;
           position: relative;
           animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-          from { 
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to { 
-            opacity: 1;
-            transform: translateY(0);
-          }
         }
 
         .modal-close {
@@ -1068,77 +932,6 @@ const ProductListingPage = () => {
           color: #4b5563;
         }
 
-        .modal-size-selector {
-          display: flex;
-          gap: 8px;
-        }
-
-        .size-selected-btn {
-          padding: 10px 20px;
-          background: white;
-          border: 2px solid #ef4444;
-          border-radius: 6px;
-          color: #1f2937;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .size-checkmark {
-          position: absolute;
-          bottom: -2px;
-          right: -2px;
-          width: 0;
-          height: 0;
-          border-left: 16px solid transparent;
-          border-bottom: 16px solid #ef4444;
-        }
-
-        .size-checkmark::after {
-          content: '✓';
-          position: absolute;
-          bottom: -14px;
-          right: -14px;
-          color: white;
-          font-size: 10px;
-          font-weight: bold;
-        }
-
-        .modal-label {
-          font-size: 14px;
-          color: #4b5563;
-          margin-bottom: 8px;
-        }
-
-        .modal-color-section {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .modal-color-options {
-          display: flex;
-          gap: 12px;
-        }
-
-        .modal-color-swatch {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: 3px solid #e5e7eb;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          position: relative;
-        }
-
-        .modal-color-swatch.selected {
-          border-color: #ef4444;
-          transform: scale(1.1);
-        }
-
         .modal-size-section {
           display: flex;
           flex-direction: column;
@@ -1189,6 +982,43 @@ const ProductListingPage = () => {
           color: white;
           font-size: 10px;
           font-weight: bold;
+        }
+
+        .modal-color-section {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .modal-color-options {
+          display: flex;
+          gap: 12px;
+        }
+
+        .modal-color-swatch {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 3px solid #e5e7eb;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+
+        .modal-color-swatch.selected {
+          border-color: #ef4444;
+          transform: scale(1.1);
+        }
+
+        .modal-color-swatch.blue {
+          background: #3b82f6;
+        }
+
+        .modal-color-swatch.black {
+          background: #1a1a1a;
+        }
+
+        .modal-color-swatch.gray {
+          background: #9ca3af;
         }
 
         .modal-actions {
@@ -1268,16 +1098,13 @@ const ProductListingPage = () => {
           text-decoration: underline;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
           .products-grid {
             grid-template-columns: repeat(3, 1fr);
           }
-
           .modal-body {
             grid-template-columns: 1fr;
           }
-
           .filter-sidebar {
             width: 350px;
           }
@@ -1288,43 +1115,34 @@ const ProductListingPage = () => {
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
           }
-
           .filters-wrapper {
             flex-direction: column;
             align-items: stretch;
           }
-
           .filters-list {
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 8px;
           }
-
           .filter-btn {
             white-space: nowrap;
           }
-
           .page-title h1 {
             font-size: 24px;
           }
-
           .modal-body {
             padding: 24px;
             gap: 24px;
           }
-
           .modal-title {
             font-size: 18px;
           }
-
           .modal-actions {
             flex-direction: column;
           }
-
           .quantity-selector {
             width: 100%;
           }
-
           .filter-sidebar {
             width: 90%;
             max-width: 400px;
@@ -1335,19 +1153,15 @@ const ProductListingPage = () => {
           .products-grid {
             grid-template-columns: 1fr;
           }
-
           .container {
             padding: 0 16px;
           }
-
           .modal-body {
             padding: 20px;
           }
-
           .modal-size-options {
             flex-wrap: wrap;
           }
-
           .filter-sidebar {
             width: 100%;
           }
@@ -1357,4 +1171,4 @@ const ProductListingPage = () => {
   );
 };
 
-export default ProductListingPage;
+export default BagListingPage;
