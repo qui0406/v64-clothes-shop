@@ -25,36 +25,63 @@ import Cart from "./components/Cart"
 import WishList from "./components/WishList"
 import ProductDetails from "./components/Products/ProductDetails"
 
-
+import { MyDispatchContext, MyUserContext } from "./configs/MyContexts";
+import { authApis, endpoints } from "./configs/APIs";
+import cookie from "react-cookies";
+import { useEffect } from "react";
+import { useReducer } from "react";
+import MyUserReducer from "./reducer/MyUserReducer";
 
 
 function App() {
+  const [user, dispatch] = useReducer(MyUserReducer, null);
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = cookie.load("token");
+      if (token !== undefined) {
+        try {
+          const res = await authApis().get(endpoints['my-profile']);
+          dispatch({ type: "login", payload: res.data });
+        } catch (err) {
+          console.error("Không thể lấy thông tin user từ token", err);
+          cookie.remove("token");
+          dispatch({ type: "logout" });
+        }
+      }
+    };
+    loadUser();
+  }, []);
+
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/pages/he-thong-cua-hang-v-sixtyfour" element= {<AboutShop/>} />
+    <MyUserContext.Provider value={user}>
+      <MyDispatchContext.Provider value={dispatch}>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/pages/he-thong-cua-hang-v-sixtyfour" element= {<AboutShop/>} />
 
-        <Route path="/account/register" element ={<Register />} />
-        <Route path="/account/login" element ={<Login />} />
-        <Route path="/account" element = {<Profile />} />
+            <Route path="/account/register" element ={<Register />} />
+            <Route path="/account/login" element ={<Login />} />
+            <Route path="/account" element = {<Profile />} />
 
-        <Route path="/form" element= {<Form />} />
-        <Route path="/tat-ca-san-pham-nu" element= {<AllProductByWomen/>} />
-        <Route path="/tat-ca-san-pham-nam" element= {<AllProductByMen />} />
-        <Route path="/collections/tui-denim" element= {<BagProduct />} />
-        <Route path="/collections/non-jeans" element= {<HatProduct />} />
-        <Route path="/collections/khau-trang" element= {<MaskProduct />} />
+            <Route path="/form" element= {<Form />} />
+            <Route path="/tat-ca-san-pham-nu" element= {<AllProductByWomen/>} />
+            <Route path="/tat-ca-san-pham-nam" element= {<AllProductByMen />} />
+            <Route path="/collections/tui-denim" element= {<BagProduct />} />
+            <Route path="/collections/non-jeans" element= {<HatProduct />} />
+            <Route path="/collections/khau-trang" element= {<MaskProduct />} />
 
-        <Route path="/cart" element= {<Cart />} />
-        <Route path="/wishlist" element= {<WishList/>} />
+            <Route path="/cart" element= {<Cart />} />
+            <Route path="/wishlist" element= {<WishList/>} />
 
-        <Route path="/product-details" element = {<ProductDetails />} />
-      </Routes>
+            <Route path="/product-details" element = {<ProductDetails />} />
+          </Routes>
 
-      <Footer />
-    </BrowserRouter>
+          <Footer />
+        </BrowserRouter>
+      </MyDispatchContext.Provider>
+    </MyUserContext.Provider >
   );
 }
 

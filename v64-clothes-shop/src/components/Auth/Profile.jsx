@@ -1,7 +1,19 @@
-import React from 'react';
 import "./../../styles/Profile.css";
+import { MyUserContext, MyDispatchContext } from "../../configs/MyContexts";
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 
 const ProfileSection = () => {
+    const user = useContext(MyUserContext);
+    const dispatch = useContext(MyDispatchContext);
+    const nav = useNavigate();
+    const location = useLocation();
+  
+  const logout = () => {
+    dispatch({ type: "logout" });
+    nav("/login");
+  };
+
   return (
     <div className="profile-container">
       <div className="sidebar">
@@ -17,7 +29,7 @@ const ProfileSection = () => {
           <a href="#" className="menu-item">Đánh giá đơn hàng</a>
           <a href="#" className="menu-item">Địa chỉ</a>
           <a href="#" className="menu-item">Sản phẩm yêu thích</a>
-          <a href="#" className="menu-item">Đăng xuất</a>
+          <Link to="/" onClick={logout} className="menu-item">Đăng xuất</Link>
         </div>
       </div>
       <div className="content">

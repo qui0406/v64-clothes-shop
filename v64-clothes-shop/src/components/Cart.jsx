@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Cookies from "js-cookie";
+
 import './../styles/CartPage.css';
 
 const CartPage = () => {
@@ -31,6 +33,7 @@ const CartPage = () => {
 
   const [note, setNote] = useState('');
   const [exportInvoice, setExportInvoice] = useState(false);
+
 
   const updateQuantity = (id, delta) => {
     setCartItems(items =>
