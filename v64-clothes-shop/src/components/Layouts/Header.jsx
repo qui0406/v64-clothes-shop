@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faSearch, faUser, faHeart, faCartShopping, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './../../styles/Header.css';
+import { MyUserContext, MyDispatchContext } from "../../configs/MyContexts";
+
 
 const Header = () => {
   const [dropdowns, setDropdowns] = useState({
@@ -14,9 +16,46 @@ const Header = () => {
     bosuutapSub: null,
   });
 
+  const user = useContext(MyUserContext);
+  const dispatch = useContext(MyDispatchContext);
+  const nav = useNavigate();
+  const location = useLocation();
+
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cart, setCart] = useState({});
+
+  useEffect(() => {
+      const savedCart = getCookie('cart');
+      if (savedCart) {
+        setCart(savedCart);
+      }
+    }, []);
+
+
+  
+  const getCookie = (name) => {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) {
+        try {
+          return JSON.parse(c.substring(nameEQ.length, c.length));
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  };
+
+  const getTotalCartItems = () => {
+    return Object.values(cart).reduce((total, item) => total + item.quantity, 0);
+  };
+  
 
   const dropdownRef = useRef(null);
   const searchRef = useRef(null);
@@ -380,16 +419,22 @@ const Header = () => {
             </form>
           </div>
         </div>
-        <Link to="/account/login" className="icon" aria-label="User account">
+       
+         {user == null ? (<Link to="/account/login" className="icon" aria-label="User account">
           <FontAwesomeIcon icon={faUser} />
-        </Link>
+        </Link>) : <Link to="/account" className="icon" aria-label="User account">
+          <FontAwesomeIcon icon={faUser} />
+        </Link> }
+
         <Link to="/wishlist" className="icon" aria-label="Wishlist">
           <FontAwesomeIcon icon={faHeart} />
           <span>0</span>
         </Link>
         <Link to="/cart" className="icon" aria-label="Cart">
           <FontAwesomeIcon icon={faCartShopping} />
-          <span>0</span>
+          {getTotalCartItems() > 0 && (
+            <span>{getTotalCartItems()} </span>
+          )}
         </Link>
       </div>
 

@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { ShoppingBag, User, Heart, Search, Menu, X, Grid, List, ChevronRight, Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+
+// Cookie helper functions
+const setCookie = (name, value, days = 7) => {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${JSON.stringify(value)};expires=${expires.toUTCString()};path=/`;
+};
+
 
 const ProductListingPage = () => {
   const [selectedFilters, setSelectedFilters] = useState([]);
@@ -8,8 +17,20 @@ const ProductListingPage = () => {
   const [selectedSize, setSelectedSize] = useState('S');
   const [quantity, setQuantity] = useState(1);
   const [filterSidebarOpen, setFilterSidebarOpen] = useState(false);
+  const [cart, setCart] = useState({});
+  const [showCartNotification, setShowCartNotification] = useState(false);
+  const navigate = useNavigate();
 
-  const [addToCart, setAddToCart] = useState(false)
+
+
+  // Save cart to cookie whenever it changes
+  useEffect(() => {
+    if (Object.keys(cart).length > 0) {
+      setCookie('cart', cart);
+      console.log('Cart saved to cookie:', cart);
+    }
+  }, [cart]);
+
   const [expandedSections, setExpandedSections] = useState({
     price: true,
     size: true,
@@ -52,6 +73,48 @@ const ProductListingPage = () => {
 
   const closeQuickView = () => {
     setQuickViewProduct(null);
+  };
+
+  const addToCart = (product, size = 'S', qty = 1) => {
+    const cartKey = `${product.id}-${size}`;
+    
+    setCart(prevCart => {
+      const newCart = { ...prevCart };
+      
+      if (cartKey in newCart) {
+        newCart[cartKey].quantity += qty;
+      } else {
+        newCart[cartKey] = {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          size: size,
+          quantity: qty,
+          sku: product.sku
+        };
+      }
+      
+      return newCart;
+    });
+
+    setShowCartNotification(true);
+    setTimeout(() => {
+      setShowCartNotification(false);
+    }, 2000);
+
+    console.log('Cart updated:', cart);
+  };
+
+  const addToCartFromQuickView = () => {
+    if (quickViewProduct) {
+      addToCart(quickViewProduct, selectedSize, quantity);
+      closeQuickView();
+    }
+  };
+
+  const toProductDetails = (id) => {
+    navigate(`/product-details`);
   };
 
   const filters = [
@@ -177,7 +240,12 @@ const ProductListingPage = () => {
   return (
     <div className="page-container">
       
-      {/* Breadcrumb */}
+      {showCartNotification && (
+        <div className="cart-notification">
+          ✓ Đã thêm vào giỏ hàng!
+        </div>
+      )}
+
       <div className="breadcrumb">
         <div className="container">
           <a href="/">Trang chủ</a>
@@ -186,14 +254,6 @@ const ProductListingPage = () => {
         </div>
       </div>
 
-      {/* Page Title */}
-      <div className="page-title">
-        <div className="container">
-          <h1>Thời Trang Denim/Jeans Nữ</h1>
-        </div>
-      </div>
-
-      {/* Filters */}
       <div className="filters-section">
         <div className="container">
           <div className="filters-wrapper">
@@ -218,17 +278,13 @@ const ProductListingPage = () => {
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="products-section">
         <div className="container">
           <div className="products-grid">
             {products.map(product => (
               <div key={product.id} className="product-card">
                 <div className="product-image-wrapper">
-                  {/* {product.discount && (
-                    <div className="discount-badge">{product.discount}</div>
-                  )} */}
-                  <img src={product.image} alt={product.name} className="product-image" />
+                  <img onClick={() => toProductDetails(product.id)} src={product.image} alt={product.name} className="product-image" />
                   
                   <button 
                     className={`wishlist-btn ${wishlist.includes(product.id) ? 'active' : ''}`}
@@ -238,7 +294,10 @@ const ProductListingPage = () => {
                   </button>
 
                   <div className="product-actions">
-                    <button className="action-btn add-to-cart-btn">
+                    <button 
+                      className="action-btn add-to-cart-btn"
+                      onClick={() => addToCart(product)}
+                    >
                       Thêm vào giỏ
                     </button>
                     <button 
@@ -265,7 +324,6 @@ const ProductListingPage = () => {
         </div>
       </div>
 
-      {/* Filter Sidebar */}
       {filterSidebarOpen && (
         <>
           <div className="filter-overlay" onClick={() => setFilterSidebarOpen(false)}></div>
@@ -278,7 +336,6 @@ const ProductListingPage = () => {
             </div>
 
             <div className="filter-sidebar-body">
-              {/* Price Range Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('price')}>
                   <span>Giá sản phẩm</span>
@@ -295,7 +352,6 @@ const ProductListingPage = () => {
                 )}
               </div>
 
-              {/* Size Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('size')}>
                   <span>Size</span>
@@ -313,7 +369,6 @@ const ProductListingPage = () => {
                 )}
               </div>
 
-              {/* Category Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('category')}>
                   <span>Chủng Loại</span>
@@ -331,7 +386,6 @@ const ProductListingPage = () => {
                 )}
               </div>
 
-              {/* Color Section */}
               <div className="filter-section">
                 <button className="filter-section-header" onClick={() => toggleSection('color')}>
                   <span>Sắp xếp</span>
@@ -359,7 +413,6 @@ const ProductListingPage = () => {
         </>
       )}
 
-      {/* Quick View Modal */}
       {quickViewProduct && (
         <div className="modal-overlay" onClick={closeQuickView}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -369,9 +422,6 @@ const ProductListingPage = () => {
             
             <div className="modal-body">
               <div className="modal-image-section">
-                {/* {quickViewProduct.discount && (
-                  <div className="discount-badge-modal">{quickViewProduct.discount}</div>
-                )} */}
                 <img src={quickViewProduct.image} alt={quickViewProduct.name} className="modal-image" />
                 <button className="modal-nav-btn modal-nav-next">
                   <ChevronRight size={24} />
@@ -389,7 +439,7 @@ const ProductListingPage = () => {
                 </div>
 
                 <div className="modal-stock">
-                  <span>Cần bán: {quickViewProduct.stock}</span>
+                  <span>Còn: {quickViewProduct.stock}</span>
                 </div>
 
                 <div className="modal-size-selector">
@@ -445,7 +495,10 @@ const ProductListingPage = () => {
                       <Plus size={16} />
                     </button>
                   </div>
-                  <button className="modal-add-to-cart">
+                  <button 
+                    className="modal-add-to-cart"
+                    onClick={addToCartFromQuickView}
+                  >
                     Thêm vào giỏ
                   </button>
                 </div>
@@ -476,6 +529,40 @@ const ProductListingPage = () => {
           max-width: 1280px;
           margin: 0 auto;
           padding: 0 24px;
+        }
+
+        .cart-notification {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #10b981;
+          color: white;
+          padding: 16px 24px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 10001;
+          animation: slideIn 0.3s ease, fadeOut 0.3s ease 1.7s;
+          font-weight: 500;
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
         }
 
         .breadcrumb {
@@ -509,6 +596,13 @@ const ProductListingPage = () => {
           font-weight: 600;
           color: #1f2937;
           letter-spacing: -0.5px;
+        }
+
+        .cart-count {
+          margin-top: 8px;
+          font-size: 14px;
+          color: #10b981;
+          font-weight: 500;
         }
 
         .filters-section {
@@ -607,20 +701,6 @@ const ProductListingPage = () => {
           background: #f3f4f6;
           aspect-ratio: 3/4;
           margin-bottom: 16px;
-        }
-
-        .discount-badge {
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: #1a1a1a;
-          color: white;
-          padding: 8px 12px;
-          font-size: 13px;
-          font-weight: 600;
-          z-index: 10;
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15% 50%);
-          padding-left: 20px;
         }
 
         .product-image {
@@ -765,7 +845,6 @@ const ProductListingPage = () => {
           background: #1a1a1a;
         }
 
-        /* Filter Sidebar */
         .filter-overlay {
           position: fixed;
           top: 0;
@@ -774,7 +853,12 @@ const ProductListingPage = () => {
           bottom: 0;
           background: rgba(0, 0, 0, 0.5);
           z-index: 9998;
-          animation: fadeIn 0.3s ease;
+          animation: fadeIn2 0.3s ease;
+        }
+
+        @keyframes fadeIn2 {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         .filter-sidebar {
@@ -788,10 +872,10 @@ const ProductListingPage = () => {
           box-shadow: -4px 0 16px rgba(0,0,0,0.1);
           display: flex;
           flex-direction: column;
-          animation: slideInRight 0.3s ease;
+          animation: slideInRight2 0.3s ease;
         }
 
-        @keyframes slideInRight {
+        @keyframes slideInRight2 {
           from {
             transform: translateX(100%);
           }
@@ -905,7 +989,6 @@ const ProductListingPage = () => {
           border-color: #1a1a1a;
         }
 
-        /* Modal Styles */
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -918,10 +1001,10 @@ const ProductListingPage = () => {
           justify-content: center;
           z-index: 10000;
           padding: 20px;
-          animation: fadeIn 0.3s ease;
+          animation: fadeIn3 0.3s ease;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeIn3 {
           from { opacity: 0; }
           to { opacity: 1; }
         }
@@ -982,20 +1065,6 @@ const ProductListingPage = () => {
           background: #f3f4f6;
           border-radius: 12px;
           overflow: hidden;
-        }
-
-        .discount-badge-modal {
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: #1a1a1a;
-          color: white;
-          padding: 10px 16px;
-          font-size: 16px;
-          font-weight: 700;
-          z-index: 10;
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15% 50%);
-          padding-left: 24px;
         }
 
         .modal-image {
@@ -1270,7 +1339,6 @@ const ProductListingPage = () => {
           text-decoration: underline;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
           .products-grid {
             grid-template-columns: repeat(3, 1fr);

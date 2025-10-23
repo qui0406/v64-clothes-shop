@@ -1,21 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import { authApis, endpoints } from "./../../configs/APIs";
+import Apis from "./../../configs/APIs";
+import cookie from "react-cookies";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {MyDispatchContext } from "./../../configs/MyContexts";
 
 export default function LoginForm() {
-  const [loginData, setLoginData] = useState({
-    emailOrPhone: '',
-    password: ''
-  });
+  const dispatch = useContext(MyDispatchContext);
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
+  const nav = useNavigate();
+  const [q] = useSearchParams();
+  const setState = (value, field) => {
+        setUser({ ...user, [field]: value });
+    };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login submitted:', loginData);
-    alert('Đăng nhập thành công!');
+    
+    try {
+      setLoading(true);
+      let res = await Apis.post(endpoints['login'], { ...user });
+      console.log("Login response:", res.data.result.token);
+      cookie.save('token', res.data.result.token);
+      let userInfo = await authApis().get(endpoints['my-profile']);
+      dispatch({
+          "type": "login",
+          "payload": userInfo.data
+      });
+      let next = q.get('next');
+      nav(next ? next : '/');
+    } catch (e) {
+        alert("Đăng nhập thất bại!");
+    } finally {
+        setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLoginData(prev => ({
+    setUser(prev => ({
       ...prev,
       [name]: value
     }));
@@ -80,8 +105,8 @@ export default function LoginForm() {
                 }} size={20} />
                 <input
                   type="text"
-                  name="emailOrPhone"
-                  value={loginData.emailOrPhone}
+                  name="identifier"
+                  value={user.identifier}
                   onChange={handleChange}
                   placeholder="Nhập số điện thoại hoặc email"
                   style={{
@@ -127,7 +152,7 @@ export default function LoginForm() {
                 <input
                   type="password"
                   name="password"
-                  value={loginData.password}
+                  value={user.password}
                   onChange={handleChange}
                   placeholder="Nhập mật khẩu"
                   style={{
@@ -245,6 +270,7 @@ export default function LoginForm() {
                   e.target.style.transform = 'translateY(-2px)';
                   e.target.style.boxShadow = '0 4px 15px rgba(220, 38, 38, 0.3)';
                 }}
+                onClick={() => window.location.href = "http://localhost:8088/api/v1/oauth2/authorization/google"}
                 onMouseLeave={(e) => {
                   e.target.style.background = '#dc2626';
                   e.target.style.transform = 'translateY(0)';
