@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import tlaq.com.backendV64.dto.ApiResponse;
 
 import java.nio.file.AccessDeniedException;
@@ -27,6 +28,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse> handleMaxSizeException(MaxUploadSizeExceededException e) {
+        return ResponseEntity.badRequest().body(
+                ApiResponse.builder()
+                        .code(400)
+                        .message("File quá lớn, vui lòng chọn ảnh dưới 10MB!")
+                        .build()
+        );
+    }
+
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {

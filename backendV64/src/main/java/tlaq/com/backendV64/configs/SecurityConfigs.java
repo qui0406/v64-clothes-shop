@@ -26,7 +26,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Slf4j
 public class SecurityConfigs {
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/users/registration", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"
+            "/users/registration", "/auth/token", "/auth/introspect", "/auth/logout",
+            "/auth/refresh",
+            "/products/get-all-products",
+            "/type-product/get-all-type-products",
+            "/products/details/**"
     };
 
     @Autowired

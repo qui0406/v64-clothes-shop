@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Heart, ShoppingCart, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { authApis, endpoints } from "./../../configs/APIs";
+import Apis from "./../../configs/APIs";
+import { useParams } from "react-router-dom";
 
 const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -11,46 +14,26 @@ const ProductDetailPage = () => {
     policy: false,
     stores: true
   });
+  const { id } = useParams();
 
-  const product = {
-    name: 'Áo Sơ Mi Denim Nam Họa Tiết Dập Ly Vai Áo Màu Xanh Med Blue - Men\'s Medium Blue Denim Shirt With Pleated Shoulders',
-    sku: '125MD4049F1',
-    msp: '125MD4049F1950S',
-    price: 964000,
-    status: 'Còn hàng',
-    colors: [
-      { name: 'MED BLUE', image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop' },
-      { name: 'DARK BLUE', image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&h=500&fit=crop' }
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    images: [
-      'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=800&fit=crop'
-    ],
-    description: 'Denim Shirt With Pleated Shoulders – "chìa khóa thời trang" cho các chàng trai muốn khẳng định phong cách lịch lãm, trẻ trung và hiện đại!',
-    features: [
-      'Thiết kế đập sóng ly hai bên vai, kết hợp kỹ thuật wash sáng màu, làm nổi bật chất liệu denim.',
-      'Túi hộp cách điệu tinh tế, tạo nét nam tính và năng động.'
-    ],
-    material: [
-      'Khuy bấm kim loại phủ hiệu ứng pearl texture',
-      '100% Cotton (7,2 OZ)',
-      'Vải Denim mềm mịn thoáng mát'
-    ],
-    madeIn: '* Thiết kế và sản xuất tại Sài Gòn, Việt Nam.\nCrafted with care by Viet Thang Jean, Vietnam.',
-    stores: [
-      {
-        name: 'Hồ Chí Minh',
-        address: '38 Quang Trung, Phường Hiệp Phú, Thành phố Thủ Đức',
-        hours: 'Mở cửa: 9 giờ 00 - 22 giờ (Các ngày trong tuần)'
-      },
-      {
-        name: 'Hồ Chí Minh',
-        address: 'Tầng 3 - TTTM Van Hanh Mall, 11 Sư Vạn Hạnh, Phường 12, Quận 10',
-        hours: 'Mở cửa: 9 giờ 00 - 22 giờ (Các ngày trong tuần)'
-      }
-    ]
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await Apis.get(endpoints['product-details'](id));
+      setProduct(response.data.result);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchProductDetails();
+  }, [id]);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -67,180 +50,188 @@ const ProductDetailPage = () => {
     setQuantity(Math.max(1, quantity + delta));
   };
 
+  if (loading) {
+    return <div className="product-page">Đang tải...</div>;
+  }
+
+  if (!product) {
+    return <div className="product-page">Không tìm thấy sản phẩm</div>;
+  }
+
   return (
     <div className="product-page">
+      {/* Breadcrumb */}
       <div className="breadcrumb">
-        <a href="#">Trang chủ</a>
-        <span>/</span>
-        <a href="#">Áo</a>
-        <span>/</span>
-        <span>{product.name}</span>
+        <a href="#">Trang chủ</a> <span>/</span>
+        <a href="#">Áo</a> <span>/</span>
+        <span>{product.productResponse.name}</span>
       </div>
 
       <div className="product-container">
+        {/* Gallery */}
         <div className="product-gallery">
           <div className="main-image">
-            <img src={product.images[selectedImage]} alt={product.name} />
+            <img 
+              src={product.productResponse.images[selectedImage]?.image} 
+              alt={product.productResponse.name} 
+            />
           </div>
           <div className="thumbnail-list">
-            {product.images.map((img, idx) => (
+            {product.productResponse.images.map((img, idx) => (
               <div
                 key={idx}
                 className={`thumbnail ${selectedImage === idx ? 'active' : ''}`}
                 onClick={() => setSelectedImage(idx)}
               >
-                <img src={img} alt={`View ${idx + 1}`} />
+                <img src={img.image} alt={`View ${idx + 1}`} />
               </div>
             ))}
           </div>
         </div>
 
+        {/* Thông tin sản phẩm */}
         <div className="product-info">
-          <h1 className="product-title">{product.name} - {product.sku}</h1>
-          
-          <div className="product-price">{formatPrice(product.price)}</div>
-          
+          <h1 className="product-title">{product.productResponse.name}</h1>
+          <div className="product-price">{formatPrice(product.productResponse.price)}</div>
+
+          {/* Thông tin chi tiết */}
           <div className="product-meta">
-            <div className="meta-item">
-              <span className="label">MSP:</span>
-              <span className="value">{product.msp}</span>
-            </div>
-            <div className="meta-item">
-              <span className="label">Tình trạng:</span>
-              <span className="value status-available">{product.status}</span>
-            </div>
+            {product.productResponse.id && (
+              <div className="meta-item">
+                <span className="label">Mã sản phẩm:</span>
+                <span className="value">{product.productResponse.id}</span>
+              </div>
+            )}
+            {product.material && (
+              <div className="meta-item">
+                <span className="label">Chất liệu:</span>
+                <span className="value">{product.material}</span>
+              </div>
+            )}
+            {product.design && (
+              <div className="meta-item">
+                <span className="label">Thiết kế:</span>
+                <span className="value">{product.design}</span>
+              </div>
+            )}
+            {product.standard && (
+              <div className="meta-item">
+                <span className="label">Tiêu chuẩn:</span>
+                <span className="value">{product.standard}</span>
+              </div>
+            )}
+            {product.sizeStandard && (
+              <div className="meta-item">
+                <span className="label">Size chuẩn:</span>
+                <span className="value">{product.sizeStandard}</span>
+              </div>
+            )}
+            {product.productResponse.color && (
+              <div className="meta-item">
+                <span className="label">Màu sắc:</span>
+                <span className="value">{product.productResponse.color}</span>
+              </div>
+            )}
+            {product.productResponse.sex !== null && (
+              <div className="meta-item">
+                <span className="label">Giới tính:</span>
+                <span className="value">{product.productResponse.sex ? 'Nam' : 'Nữ'}</span>
+              </div>
+            )}
+            {product.productResponse.status && (
+              <div className="meta-item">
+                <span className="label">Trạng thái:</span>
+                <span className="value status-available">{product.productResponse.status}</span>
+              </div>
+            )}
+            {product.productResponse.typeProductResponse && (
+              <div className="meta-item">
+                <span className="label">Loại sản phẩm:</span>
+                <span className="value">{product.productResponse.typeProductResponse}</span>
+              </div>
+            )}
           </div>
 
+          {/* Mô tả sản phẩm */}
+          {product.description && (
+            <div className="product-description">
+              <p className="desc-highlight">{product.description}</p>
+            </div>
+          )}
+
+          {/* Thông số cơ thể (nếu có) */}
+          {(product.eo || product.mong || product.lai || product.suonTrong || product.suonNgoai) && (
+            <div className="body-measurements">
+              <h3>Thông số cơ thể</h3>
+              <div className="measurements-grid">
+                {product.eo && <div><strong>Eo:</strong> {product.eo}</div>}
+                {product.mong && <div><strong>Mông:</strong> {product.mong}</div>}
+                {product.lai && <div><strong>Lai:</strong> {product.lai}</div>}
+                {product.suonTrong && <div><strong>Sườn trong:</strong> {product.suonTrong}</div>}
+                {product.suonNgoai && <div><strong>Sườn ngoài:</strong> {product.suonNgoai}</div>}
+              </div>
+            </div>
+          )}
+
+          {/* Nút hành động */}
           <div className="product-options">
             <div className="option-group">
-              <label>Màu sắc: {product.colors[selectedColor].name}</label>
-              <div className="color-options">
-                {product.colors.map((color, idx) => (
-                  <div
-                    key={idx}
-                    className={`color-option ${selectedColor === idx ? 'selected' : ''}`}
-                    onClick={() => setSelectedColor(idx)}
-                  >
-                    <img src={color.image} alt={color.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="option-group">
-              <label>
-                Kích thước:
-                <a href="#" className="size-guide">📏 Hướng dẫn chọn size</a>
-              </label>
-              <div className="size-options">
-                {product.sizes.map(size => (
-                  <button
-                    key={size}
-                    className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
-                    onClick={() => setSelectedSize(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="option-group">
               <div className="quantity-actions">
-                <div className="quantity-control">
-                  <button onClick={() => updateQuantity(-1)}>−</button>
-                  <input type="text" value={quantity} readOnly />
-                  <button onClick={() => updateQuantity(1)}>+</button>
-                </div>
                 <button className="btn-add-cart">Thêm vào giỏ</button>
                 <button className="btn-buy-now">Mua ngay</button>
               </div>
             </div>
           </div>
 
-          <div className="product-description">
-            <p className="desc-highlight">{product.description}</p>
-            
-            <div className="desc-section">
-              <h3>Điểm nổi bật:</h3>
-              <ul>
-                {product.features.map((feature, idx) => (
-                  <li key={idx}>- {feature}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="desc-section">
-              <p className="made-in">{product.madeIn}</p>
-            </div>
-
-            <div className="desc-section">
-              <h3>Chất liệu:</h3>
-              <ul>
-                {product.material.map((item, idx) => (
-                  <li key={idx}>- {item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
+          {/* Accordion */}
           <div className="accordion">
-            <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => toggleSection('standards')}
-              >
-                <span>Tiêu chuẩn sản phẩm</span>
-                {expandedSections.standards ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-              {expandedSections.standards && (
-                <div className="accordion-content">
-                  <p>Thông tin về tiêu chuẩn sản phẩm...</p>
-                </div>
-              )}
-            </div>
+            {/* Tiêu chuẩn sản phẩm */}
+            {(product.standard || product.sizeStandard) && (
+              <div className="accordion-item">
+                <button className="accordion-header" onClick={() => toggleSection('standards')}>
+                  <span>Tiêu chuẩn sản phẩm</span>
+                  {expandedSections.standards ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {expandedSections.standards && (
+                  <div className="accordion-content">
+                    {product.standard && <p>Tiêu chuẩn: {product.standard}</p>}
+                    {product.sizeStandard && <p>Kích thước chuẩn: {product.sizeStandard}</p>}
+                  </div>
+                )}
+              </div>
+            )}
 
+            {/* Chính sách đổi trả */}
             <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => toggleSection('policy')}
-              >
+              <button className="accordion-header" onClick={() => toggleSection('policy')}>
                 <span>Chính sách đổi trả</span>
                 {expandedSections.policy ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
               {expandedSections.policy && (
                 <div className="accordion-content">
-                  <p>Thông tin về chính sách đổi trả...</p>
+                  <p>Đổi trả trong vòng 7 ngày nếu sản phẩm lỗi kỹ thuật.</p>
+                  <p>Liên hệ hotline: 1900 1234 để được hỗ trợ.</p>
                 </div>
               )}
             </div>
 
+            {/* Cửa hàng */}
             <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => toggleSection('stores')}
-              >
-                <span>Có 7 cửa hàng còn sản phẩm này</span>
+              <button className="accordion-header" onClick={() => toggleSection('stores')}>
+                <span>Có sẵn tại cửa hàng</span>
                 {expandedSections.stores ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
               {expandedSections.stores && (
-                <div className="accordion-content stores-list">
-                  {product.stores.map((store, idx) => (
-                    <div key={idx} className="store-item">
-                      <div className="store-header">
-                        <MapPin size={18} />
-                        <strong>{store.name}:</strong>
-                      </div>
-                      <p className="store-address">{store.address}</p>
-                      <p className="store-hours">{store.hours}</p>
-                    </div>
-                  ))}
+                <div className="accordion-content">
+                  <p>Hiện tại sản phẩm đang có sẵn tại 7 cửa hàng gần bạn.</p>
+                  <p>Vui lòng liên hệ để kiểm tra tồn kho chính xác.</p>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+  
 
       <style jsx>{`
         * {
@@ -367,6 +358,28 @@ const ProductDetailPage = () => {
 
         .status-available {
           color: #27ae60 !important;
+        }
+
+        .body-measurements {
+          padding: 15px;
+          background: #f9f9f9;
+          border-radius: 6px;
+          border-left: 3px solid #c9a76a;
+        }
+
+        .body-measurements h3 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 12px;
+        }
+
+        .measurements-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          font-size: 14px;
+          color: #666;
         }
 
         .product-options {
@@ -658,4 +671,4 @@ const ProductDetailPage = () => {
   );
 };
 
-export default ProductDetailPage
+export default ProductDetailPage;
