@@ -7,6 +7,10 @@ export const endpoints ={
     "login": "/auth/token",
     "register": "/users/registration",
     "my-profile": "/users/my-info",
+    "products": "/products/get-all-products",
+    "type-products": "/type-product/get-all-type-products",
+    "product/create": "/products/create",
+    "product-details": id => `/products/details/${id}`,
 }
 
 export const authApis = () => {

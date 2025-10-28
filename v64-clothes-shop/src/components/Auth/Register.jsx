@@ -1,33 +1,54 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Lock, User, Calendar } from 'lucide-react';
+import { authApis, endpoints } from "./../../configs/APIs";
+import Apis from "./../../configs/APIs";
+import MySpinner from "./../Ui/MySpinner";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
-    ho: '',
-    ten: '',
+    lastName: '',
+    firstName: '',
     email: '',
-    ngaySinh: '',
-    gioiTinh: 'nu',
-    soDienThoai: '',
-    matKhau: '',
-    dongYEmail: false
+    dob: '',
+    sex: true,
+    phoneNumber: '',
+    password: '',
+    verifyEmail: false
   });
 
   const [activeTab, setActiveTab] = useState('email');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Đăng ký thành công!');
+    setLoading(true);
+    
+    try {
+      let response = await Apis.post(endpoints['register'], formData);
+      if (response.status === 201) {
+        alert("Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert("Đăng ký không thành công. Vui lòng thử lại.");
+    }
+    setLoading(false);
+    
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox'
+        ? checked
+        : name === 'sex' 
+          ? value === 'true'
+          : value
     }));
   };
+
 
   return (
     <div style={{
@@ -141,8 +162,8 @@ export default function RegisterForm() {
                     }} size={20} />
                     <input
                       type="text"
-                      name="ho"
-                      value={formData.ho}
+                      name="lastName"
+                      value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Nhập họ"
                       style={{
@@ -185,8 +206,8 @@ export default function RegisterForm() {
                     }} size={20} />
                     <input
                       type="text"
-                      name="ten"
-                      value={formData.ten}
+                      name="firstName"
+                      value={formData.firstName}
                       onChange={handleChange}
                       placeholder="Nhập tên"
                       style={{
@@ -278,8 +299,8 @@ export default function RegisterForm() {
                   }} size={20} />
                   <input
                     type="date"
-                    name="ngaySinh"
-                    value={formData.ngaySinh}
+                    name="dob"
+                    value={formData.dob}
                     onChange={handleChange}
                     style={{
                       width: '100%',
@@ -323,9 +344,9 @@ export default function RegisterForm() {
                   }}>
                     <input
                       type="radio"
-                      name="gioiTinh"
-                      value="nu"
-                      checked={formData.gioiTinh === 'nu'}
+                      name="sex"
+                      value={false}
+                      checked={formData.sex === false}
                       onChange={handleChange}
                       style={{
                         width: '20px',
@@ -346,9 +367,9 @@ export default function RegisterForm() {
                   }}>
                     <input
                       type="radio"
-                      name="gioiTinh"
-                      value="nam"
-                      checked={formData.gioiTinh === 'nam'}
+                      name="sex"
+                      value={true}
+                      checked={formData.sex === true}
                       onChange={handleChange}
                       style={{
                         width: '20px',
@@ -384,8 +405,8 @@ export default function RegisterForm() {
                   }} size={20} />
                   <input
                     type="tel"
-                    name="soDienThoai"
-                    value={formData.soDienThoai}
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                     placeholder="0123456789"
                     style={{
@@ -430,8 +451,8 @@ export default function RegisterForm() {
                   }} size={20} />
                   <input
                     type="password"
-                    name="matKhau"
-                    value={formData.matKhau}
+                    name="password"
+                    value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
                     style={{
@@ -459,8 +480,8 @@ export default function RegisterForm() {
               <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '25px' }}>
                 <input
                   type="checkbox"
-                  name="dongYEmail"
-                  checked={formData.dongYEmail}
+                  name="verifyEmail"
+                  checked={formData.verifyEmail || false}
                   onChange={handleChange}
                   style={{
                     width: '20px',
@@ -481,7 +502,7 @@ export default function RegisterForm() {
               </div>
 
               {/* Submit Button */}
-              <button
+              {loading ? <MySpinner /> : <button
                 onClick={handleSubmit}
                 style={{
                   width: '100%',
@@ -506,7 +527,7 @@ export default function RegisterForm() {
                 }}
               >
                 Đăng ký
-              </button>
+              </button>}
 
               {/* Back Link */}
               <div style={{ textAlign: 'center', marginTop: '20px' }}>

@@ -3,6 +3,7 @@ package tlaq.com.backendV64.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 import tlaq.com.backendV64.entity.enums.UserType;
 
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class User {
     @Column(name = "email_verified", nullable = false)
     boolean emailVerified;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;
 

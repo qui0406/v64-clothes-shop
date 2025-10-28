@@ -17,6 +17,11 @@ public enum ErrorCode {
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1009, "Invalid email address", HttpStatus.BAD_REQUEST),
     EMAIL_IS_REQUIRED(1009, "Email is required", HttpStatus.BAD_REQUEST),
+
+    PRODUCT_NOT_FOUND(10010, "Product not found", HttpStatus.NOT_FOUND),
+    IMAGE_UPLOAD_ERROR(10011, "Image upload error", HttpStatus.BAD_REQUEST),
+    IMAGE_IS_EMPTY(10012, "Image is empty", HttpStatus.BAD_REQUEST),
+    TYPE_PRODUCT_NOT_FOUND(10013, "Type product not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { ShoppingBag, User, Heart, Search, Menu, X, Grid, List, ChevronRight, Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingBag, User, ChevronLeft, ChevronRight, Heart, Search, Menu, X, Grid, List, Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { authApis, endpoints } from "./../../configs/APIs";
+import Apis from "./../../configs/APIs";
+import cookie from "react-cookies";
+import { Link, useSearchParams } from "react-router-dom";
+import {MyDispatchContext } from "./../../configs/MyContexts";
+
 
 // Cookie helper functions
 const setCookie = (name, value, days = 7) => {
@@ -21,9 +27,54 @@ const ProductListingPage = () => {
   const [showCartNotification, setShowCartNotification] = useState(false);
   const navigate = useNavigate();
 
+  const [products, setProducts1] = useState([]);
+  const [filters , setTypeProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const fetchProduct = async () => {
+    setLoading(true); 
+    try {
+      let res = await Apis.get(endpoints['products']); 
+
+      if (res.status === 200 || res.status === 201) {
+        const result = res.data?.result || [];
+        setProducts1(result); 
+        console.log("Products fetched:", res.data.result);
+      } else {
+        console.error("Failed to fetch products:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTypeProducts = async () => {
+    setLoading(true);
+    try {
+      let res = await Apis.get(endpoints['type-products']);
+      if (res.status === 200 || res.status === 201) {
+        const result = res.data?.result || [];
+        setTypeProducts(result);
+        console.log("Type products fetched:", res.data.result);
+      } else {
+        console.error("Failed to fetch type products:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching type products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
+    fetchTypeProducts();
+  }, []);
 
 
-  // Save cart to cookie whenever it changes
   useEffect(() => {
     if (Object.keys(cart).length > 0) {
       setCookie('cart', cart);
@@ -67,6 +118,9 @@ const ProductListingPage = () => {
 
   const openQuickView = (product) => {
     setQuickViewProduct(product);
+
+    console.log('Quick view opened for product:', product);
+
     setQuantity(1);
     setSelectedSize('S');
   };
@@ -114,128 +168,8 @@ const ProductListingPage = () => {
   };
 
   const toProductDetails = (id) => {
-    navigate(`/product-details`);
+    navigate(`/product-details/${id}`);
   };
-
-  const filters = [
-    { id: 'ao-khoac', label: 'ÁO KHOÁC' },
-    { id: 'kieu-nu', label: 'ÁO KIỂU NỮ' },
-    { id: 'so-mi', label: 'ÁO SƠ MI' },
-    { id: 'so-mi-vai', label: 'ÁO SƠ MI VÁI' },
-    { id: 'thun', label: 'ÁO THUN' },
-    { id: 'dam', label: 'ĐẦM' },
-    { id: 'quan-dai', label: 'QUẦN DÀI' },
-    { id: 'quan-lung', label: 'QUẦN LỬNG' },
-    { id: 'quan-ngan', label: 'QUẦN NGẮN' },
-    { id: 'vay', label: 'VÁY' }
-  ];
-
-  const products = [
-    {
-      id: 1,
-      name: 'Áo Nữ Denim Dáng Rộng Màu Xanh Đậm',
-      englishName: 'Med Blue Denim Blouse For Her',
-      sku: '222WD2016B1950S',
-      price: '432,000₫',
-      originalPrice: '864,000₫',
-      discount: '-50%',
-      stock: 950,
-      image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600&q=80',
-      colors: [{ name: 'MED BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 2,
-      name: 'BOOT CUT JEANS',
-      englishName: 'Boot Cut Jeans',
-      sku: 'BCJ2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 1200,
-      image: 'https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=600&q=80',
-      colors: [{ name: 'BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 3,
-      name: 'MAXI DRESS',
-      englishName: 'Maxi Dress',
-      sku: 'MD2024001',
-      price: '1,164,000₫',
-      originalPrice: '1,464,000₫',
-      discount: '-20%',
-      stock: 850,
-      image: 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&q=80',
-      colors: [{ name: 'BLUE', value: 'blue' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 4,
-      name: 'MINI SKIRT',
-      englishName: 'Mini Skirt',
-      sku: 'MS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 750,
-      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 5,
-      name: 'PLEATED SHORTS',
-      englishName: 'Pleated Shorts',
-      sku: 'PS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 680,
-      image: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }, { name: 'BROWN', value: 'brown' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 6,
-      name: 'PLEATED SHORTS',
-      englishName: 'Pleated Shorts',
-      sku: 'PS2024002',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 920,
-      image: 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=600&q=80',
-      colors: [{ name: 'BROWN', value: 'brown' }, { name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 7,
-      name: 'WORKWEAR SHORTS',
-      englishName: 'Workwear Shorts',
-      sku: 'WS2024001',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 1050,
-      image: 'https://images.unsplash.com/photo-1591195842757-e21d73e8b3c6?w=600&q=80',
-      colors: [{ name: 'NAVY', value: 'navy' }, { name: 'BLACK', value: 'black' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    },
-    {
-      id: 8,
-      name: 'WORKWEAR SHORTS',
-      englishName: 'Workwear Shorts',
-      sku: 'WS2024002',
-      price: '664,000₫',
-      originalPrice: '864,000₫',
-      discount: '-25%',
-      stock: 870,
-      image: 'https://images.unsplash.com/photo-1591195851234-802ad6fa6845?w=600&q=80',
-      colors: [{ name: 'BLACK', value: 'black' }, { name: 'NAVY', value: 'navy' }],
-      sizes: ['S', 'M', 'L', 'XL']
-    }
-  ];
 
   return (
     <div className="page-container">
@@ -264,7 +198,7 @@ const ProductListingPage = () => {
                   className={`filter-btn ${selectedFilters.includes(filter.id) ? 'active' : ''}`}
                   onClick={() => toggleFilter(filter.id)}
                 >
-                  {filter.label}
+                  {filter.name}
                 </button>
               ))}
             </div>
@@ -280,48 +214,75 @@ const ProductListingPage = () => {
 
       <div className="products-section">
         <div className="container">
+        
           <div className="products-grid">
-            {products.map(product => (
-              <div key={product.id} className="product-card">
-                <div className="product-image-wrapper">
-                  <img onClick={() => toProductDetails(product.id)} src={product.image} alt={product.name} className="product-image" />
-                  
-                  <button 
-                    className={`wishlist-btn ${wishlist.includes(product.id) ? 'active' : ''}`}
-                    onClick={() => toggleWishlist(product.id)}
-                  >
-                    <Heart size={20} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} />
-                  </button>
+        {Array.isArray(products) && products.length > 0 ? (
+          products.map(product => (
+          <div key={product.id} className="product-card">
+            <div className="product-image-wrapper">
+              <img
+                onClick={() => toProductDetails(product.id)}
+                src={
+                  product.images && product.images.length > 0
+                    ? product.images[0].image
+                    : "/placeholder.jpg" // ảnh mặc định nếu không có ảnh
+                }
+                alt={product.name}
+                className="product-image"
+              />
 
-                  <div className="product-actions">
-                    <button 
-                      className="action-btn add-to-cart-btn"
-                      onClick={() => addToCart(product)}
-                    >
-                      Thêm vào giỏ
-                    </button>
-                    <button 
-                      className="action-btn quick-view-btn"
-                      onClick={() => openQuickView(product)}
-                    >
-                      Xem nhanh
-                    </button>
-                  </div>
-                </div>
+              <button
+                className={`wishlist-btn ${wishlist.includes(product.id) ? 'active' : ''}`}
+                onClick={() => toggleWishlist(product.id)}
+              >
+                <Heart
+                  size={20}
+                  fill={wishlist.includes(product.id) ? 'currentColor' : 'none'}
+                />
+              </button>
 
-                <div className="product-info">
-                  <p className="product-price">{product.price}</p>
-                  <h3 className="product-name">{product.name}</h3>
-                  <div className="product-colors">
-                    {product.colors.map((color, index) => (
-                      <button key={index} className={`color-swatch ${color.value}`} aria-label={color.name}></button>
-                    ))}
-                  </div>
-                </div>
+              <div className="product-actions">
+                <button
+                  className="action-btn add-to-cart-btn"
+                  onClick={() => addToCart(product)}
+                >
+                  Thêm vào giỏ
+                </button>
+                <button
+                  className="action-btn quick-view-btn"
+                  onClick={() => openQuickView(product)}
+                >
+                  Xem nhanh
+                </button>
               </div>
-            ))}
+            </div>
+
+            <div className="product-info">
+              <p className="product-price">
+                {product.price?.toLocaleString('vi-VN')}₫
+              </p>
+              <h3 className="product-name">{product.name}</h3>
+
+              <div className="product-colors">
+                {(product.colors || []).map((color, index) => (
+                  <button
+                    key={index}
+                    className={`color-swatch ${color.value || ''}`}
+                    aria-label={color.name || 'Màu'}
+                  ></button>
+                ))}
+              </div>
+            </div>
           </div>
+        ))
+      ) : (
+        <p>Không có sản phẩm nào.</p>
+      )}
+    </div>
+
+  
         </div>
+
       </div>
 
       {filterSidebarOpen && (
@@ -414,101 +375,183 @@ const ProductListingPage = () => {
       )}
 
       {quickViewProduct && (
-        <div className="modal-overlay" onClick={closeQuickView}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeQuickView}>
-              <X size={24} />
-            </button>
-            
-            <div className="modal-body">
-              <div className="modal-image-section">
-                <img src={quickViewProduct.image} alt={quickViewProduct.name} className="modal-image" />
-                <button className="modal-nav-btn modal-nav-next">
-                  <ChevronRight size={24} />
-                </button>
+  <div className="modal-overlay" onClick={closeQuickView}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <button className="modal-close" onClick={closeQuickView}>
+        <X size={24} />
+      </button>
+
+      <div className="modal-body">
+        {/* --- PHẦN HÌNH ẢNH CÓ NEXT/PREV --- */}
+        <div className="modal-image-section">
+          {(() => {
+            const images =
+              quickViewProduct.images && quickViewProduct.images.length > 0
+                ? quickViewProduct.images
+                : [{ image: "/placeholder.jpg" }];
+
+            const handlePrev = () => {
+              setCurrentImageIndex((prev) =>
+                prev === 0 ? images.length - 1 : prev - 1
+              );
+            };
+
+            const handleNext = () => {
+              setCurrentImageIndex((prev) =>
+                prev === images.length - 1 ? 0 : prev + 1
+              );
+            };
+
+            return (
+              <div className="modal-image-wrapper relative">
+                <img
+                  src={images[currentImageIndex].image}
+                  alt={`${quickViewProduct.name}-${currentImageIndex}`}
+                  className="modal-image"
+                />
+                {images.length > 1 && (
+                  <>
+                    <button
+                      className="modal-nav-btn modal-nav-prev"
+                      onClick={handlePrev}
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      className="modal-nav-btn modal-nav-next"
+                      onClick={handleNext}
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
+                <div className="modal-image-dots">
+                  {images.map((_, idx) => (
+                    <span
+                      key={idx}
+                      className={`dot ${
+                        idx === currentImageIndex ? "active" : ""
+                      }`}
+                    ></span>
+                  ))}
+                </div>
               </div>
+            );
+          })()}
+        </div>
 
-              <div className="modal-details-section">
-                <h2 className="modal-title">{quickViewProduct.name}. {quickViewProduct.englishName} - {quickViewProduct.sku}</h2>
-                
-                <p className="modal-sku">SKU: {quickViewProduct.sku}</p>
-                
-                <div className="modal-price-section">
-                  <span className="modal-price">{quickViewProduct.price}</span>
-                  <span className="modal-original-price">{quickViewProduct.originalPrice}</span>
-                </div>
+        {/* --- PHẦN CHI TIẾT SẢN PHẨM --- */}
+        <div className="modal-details-section">
+          <h2 className="modal-title">
+            {quickViewProduct.name}{" "}
+            - {quickViewProduct.id}
+          </h2>
 
-                <div className="modal-stock">
-                  <span>Còn: {quickViewProduct.stock}</span>
-                </div>
+          <p className="modal-sku">SKU: {quickViewProduct.id}</p>
 
-                <div className="modal-size-selector">
-                  <button className="size-selected-btn">
-                    {quickViewProduct.stock}
-                    <div className="size-checkmark"></div>
-                  </button>
-                </div>
+          <div className="modal-price-section">
+            <span className="modal-price">
+              {quickViewProduct.price?.toLocaleString("vi-VN")}₫
+            </span>
+            {quickViewProduct.originalPrice && (
+              <span className="modal-original-price">
+                {quickViewProduct.originalPrice?.toLocaleString("vi-VN")}₫
+              </span>
+            )}
+          </div>
 
-                <div className="modal-color-section">
-                  <p className="modal-label">Màu sắc: {quickViewProduct.colors[0].name}</p>
-                  <div className="modal-color-options">
-                    {quickViewProduct.colors.map((color, index) => (
-                      <button key={index} className={`modal-color-swatch ${color.value} ${index === 0 ? 'selected' : ''}`}></button>
-                    ))}
-                  </div>
-                </div>
+          <div className="modal-stock">
+            <span>Còn: {quickViewProduct.stock || 0}</span>
+          </div>
 
-                <div className="modal-size-section">
-                  <p className="modal-label">Kích thước:</p>
-                  <div className="modal-size-options">
-                    {quickViewProduct.sizes.map((size) => (
-                      <button
-                        key={size}
-                        className={`modal-size-btn ${selectedSize === size ? 'selected' : ''}`}
-                        onClick={() => setSelectedSize(size)}
-                      >
-                        {size}
-                        {selectedSize === size && <div className="size-checkmark"></div>}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="modal-actions">
-                  <div className="quantity-selector">
-                    <button 
-                      className="quantity-btn"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <input 
-                      type="text" 
-                      className="quantity-input" 
-                      value={quantity}
-                      readOnly
-                    />
-                    <button 
-                      className="quantity-btn"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                  <button 
-                    className="modal-add-to-cart"
-                    onClick={addToCartFromQuickView}
-                  >
-                    Thêm vào giỏ
-                  </button>
-                </div>
-
-                <a href="#" className="modal-view-details">Xem chi tiết »</a>
+          {/* --- MÀU SẮC --- */}
+          {quickViewProduct.colors && quickViewProduct.colors.length > 0 && (
+            <div className="modal-color-section">
+              <p className="modal-label">
+                Màu sắc: {quickViewProduct.colors[0]?.name || "Không rõ"}
+              </p>
+              <div className="modal-color-options">
+                {quickViewProduct.colors.map((color, index) => (
+                  <button
+                    key={index}
+                    className={`modal-color-swatch ${color.value || ""} ${
+                      index === 0 ? "selected" : ""
+                    }`}
+                  ></button>
+                ))}
               </div>
             </div>
+          )}
+
+          {/* --- KÍCH THƯỚC --- */}
+          {quickViewProduct.sizes && quickViewProduct.sizes.length > 0 && (
+            <div className="modal-size-section">
+              <p className="modal-label">Kích thước:</p>
+              <div className="modal-size-options">
+                {quickViewProduct.sizes.map((size) => (
+                  <button
+                    key={size}
+                    className={`modal-size-btn ${
+                      selectedSize === size ? "selected" : ""
+                    }`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                    {selectedSize === size && (
+                      <div className="size-checkmark"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* --- SỐ LƯỢNG + NÚT GIỎ HÀNG --- */}
+          <div className="modal-actions">
+            <div className="quantity-selector">
+              <button
+                className="quantity-btn"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              >
+                <Minus size={16} />
+              </button>
+              <input
+                type="text"
+                className="quantity-input"
+                value={quantity}
+                readOnly
+              />
+              <button
+                className="quantity-btn"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+
+            <button
+              className="modal-add-to-cart"
+              onClick={addToCartFromQuickView}
+            >
+              Thêm vào giỏ
+            </button>
           </div>
+
+          <button
+            className="modal-view-details"
+            onClick={() => {
+              closeQuickView();
+              navigate(`/product-details/${quickViewProduct.id}`);
+            }}
+          >
+            Xem chi tiết »
+          </button>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
+
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -702,6 +745,45 @@ const ProductListingPage = () => {
           aspect-ratio: 3/4;
           margin-bottom: 16px;
         }
+
+        .modal-nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(255,255,255,0.8);
+          border: none;
+          padding: 8px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+
+        .modal-nav-prev {
+          left: 10px;
+        }
+
+        .modal-nav-next {
+          right: 10px;
+        }
+
+        .modal-image-dots {
+          display: flex;
+          justify-content: center;
+          gap: 6px;
+          margin-top: 10px;
+        }
+
+        .modal-image-dots .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #ccc;
+          transition: 0.2s;
+        }
+
+        .modal-image-dots .dot.active {
+          background: #000;
+        }
+
 
         .product-image {
           width: 100%;
@@ -1074,22 +1156,7 @@ const ProductListingPage = () => {
           display: block;
         }
 
-        .modal-nav-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          background: white;
-          border: none;
-          padding: 12px;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.3s ease;
-        }
-
+  
         .modal-nav-btn:hover {
           background: #f3f4f6;
         }
