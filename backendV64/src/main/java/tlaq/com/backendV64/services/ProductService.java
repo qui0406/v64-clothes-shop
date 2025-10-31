@@ -15,4 +15,6 @@ public interface ProductService {
     void delete(String productId);
 
     ProductDetailsResponse getProductDetails(String productId);
+
+    List<ProductResponse> getFilterProductBySexAndTypeNameProduct(boolean sex, String typeNameProduct);
 }

@@ -33,8 +33,14 @@ public class Product {
 
     boolean sex;
 
-    @Enumerated(EnumType.STRING)
-    Color color;
+    @ManyToMany
+    @JoinTable(
+            name = "product_colors",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "color_id")
+    )
+    List<ColorProduct> colors;
+
     int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

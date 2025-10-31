@@ -22,6 +22,7 @@ public enum ErrorCode {
     IMAGE_UPLOAD_ERROR(10011, "Image upload error", HttpStatus.BAD_REQUEST),
     IMAGE_IS_EMPTY(10012, "Image is empty", HttpStatus.BAD_REQUEST),
     TYPE_PRODUCT_NOT_FOUND(10013, "Type product not found", HttpStatus.NOT_FOUND),
+    WISHLIST_NOT_FOUND(10014, "Wishlist not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -2,6 +2,7 @@ package tlaq.com.backendV64.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import tlaq.com.backendV64.entity.ColorProduct;
 import tlaq.com.backendV64.entity.enums.Color;
 import tlaq.com.backendV64.entity.enums.Status;
 
@@ -19,9 +20,9 @@ public class ProductResponse {
     String name;
     BigDecimal price;
     int quantity;
-    Color color;
     boolean sex;
     Status status;
+    List<ColorProductResponse> colorProductResponse;
     TypeProductResponse typeProductResponse;
     List<ProductImageResponse> images;
 }

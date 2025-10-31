@@ -11,14 +11,12 @@ import tlaq.com.backendV64.entity.ProductImage;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = { TypeProductMapper.class, ProductImageMapper.class })
+@Mapper(componentModel = "spring", uses = { TypeProductMapper.class, ProductImageMapper.class, ColorProductMapper.class })
 public interface ProductMapper {
-
     @Mapping(source = "typeProduct", target = "typeProductResponse")
     @Mapping(source = "images", target = "images")
+    @Mapping(source = "colors", target = "colorProductResponse")
     ProductResponse toProductResponse(Product product);
-
     Product toProduct(ProductRequest request);
-
     List<ProductResponse> toListProductResponse(List<Product> products);
 }

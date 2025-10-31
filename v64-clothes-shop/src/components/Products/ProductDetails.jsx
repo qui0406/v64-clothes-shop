@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Heart, ShoppingCart, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { authApis, endpoints } from "./../../configs/APIs";
 import Apis from "./../../configs/APIs";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -18,6 +18,7 @@ const ProductDetailPage = () => {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchProductDetails = async () => {
     try {
@@ -30,6 +31,10 @@ const ProductDetailPage = () => {
       setLoading(false);
     }
   };
+
+  const handleBuyNow = (productId) => {
+    navigate(`/checkouts/${productId}`, {state : {product}});
+  }
 
   useEffect(() => {
     fetchProductDetails();
@@ -177,8 +182,17 @@ const ProductDetailPage = () => {
           <div className="product-options">
             <div className="option-group">
               <div className="quantity-actions">
+                <div className="quantity-control">
+                  <button onClick={() => updateQuantity(-1)}>-</button>
+                  <input 
+                    type="text" 
+                    value={quantity} 
+                    readOnly 
+                  />
+                  <button onClick={() => updateQuantity(1)}>+</button>
+                </div>
                 <button className="btn-add-cart">Thêm vào giỏ</button>
-                <button className="btn-buy-now">Mua ngay</button>
+                <button className="btn-buy-now" onClick={() => handleBuyNow(product.id)} >Mua ngay</button>
               </div>
             </div>
           </div>

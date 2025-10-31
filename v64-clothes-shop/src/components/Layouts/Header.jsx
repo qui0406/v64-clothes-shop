@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faSearch, faUser, faHeart, faCartShopping, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './../../styles/Header.css';
-import { MyUserContext, MyDispatchContext } from "../../configs/MyContexts";
+import { MyUserContext, MyDispatchContext } from "./../../configs/MyContexts";
 
 
 const Header = () => {
@@ -138,13 +138,53 @@ const Header = () => {
     }
   };
 
+  const logout = () => {
+    dispatch({ type: "logout" });
+    nav("/login");
+  };
+
+  const isStaff = user?.roles?.some(role => role.name === "STAFF");
+
+
+
   return (
     <header className="header">
       <Link to="/" className="logo">
         V-SIXTYFOUR
       </Link>
 
+      {isStaff ? (
+        <>
+          <Link to="/product/manage" className="staff-link"> Quản lý sản phẩm</Link>
+          <Link to="/product/orders" className="staff-link"> Quản lý đơn hàng</Link>
+          <Link to="/product/statistics" className="staff-link"> Thống kê đơn hàng</Link>
+
+          {user === null ? (
+              <>
+                <NavLink to="/login" className="btn btn-outline-light">
+                  Đăng nhập
+                </NavLink>
+                <NavLink to="/register" className="btn btn-light text-dark fw-semibold">
+                  Đăng ký
+                </NavLink>
+              </>
+            ) : (
+              <div className="d-flex align-items-center">
+                <Link to="/profile" className="nav-link text-info d-flex align-items-center">
+                  
+                  <span className="ms-2">{user.username}</span>
+                </Link>
+                <button className="btn btn-danger ms-3" onClick={logout}>
+                  Đăng xuất
+                </button>
+              </div>
+            )}
+        </>
+      ) : (
+        <>
+
       <nav className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`} ref={dropdownRef}>
+        
         {/* Thêm nút exit cho mobile menu */}
         {mobileMenuOpen && (
           <div className="mobile-menu-header">
@@ -441,6 +481,9 @@ const Header = () => {
       <button className="far-bar-icon" onClick={toggleMobileMenu} aria-label="Toggle menu">
         <FontAwesomeIcon icon={faBars} />
       </button>
+
+      </>
+      )}
     </header>
   );
 };
