@@ -16,6 +16,7 @@ import tlaq.com.backendV64.entity.Product;
 import tlaq.com.backendV64.entity.ProductDetails;
 import tlaq.com.backendV64.entity.ProductImage;
 import tlaq.com.backendV64.entity.TypeProduct;
+import tlaq.com.backendV64.entity.enums.Status;
 import tlaq.com.backendV64.exeptions.AppException;
 import tlaq.com.backendV64.exeptions.ErrorCode;
 import tlaq.com.backendV64.mapper.ProductDetailsMapper;
@@ -28,6 +29,7 @@ import tlaq.com.backendV64.services.ProductService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setImages(productImages);
+        product.setStatus(Status.EXISTED);
         productRepository.save(product);
         return productMapper.toProductResponse(product);
     }
@@ -112,5 +115,12 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         productRepository.delete(product);
+    }
+
+    @Override
+    public List<ProductResponse> getFilterProductBySexAndTypeNameProduct(boolean sex, String typeNameProduct) {
+        List<Product> products = productRepository
+                .findBySexAndTypeProduct_Name(sex, typeNameProduct);
+        return productMapper.toListProductResponse(products);
     }
 }

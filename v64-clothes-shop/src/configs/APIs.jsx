@@ -11,6 +11,8 @@ export const endpoints ={
     "type-products": "/type-product/get-all-type-products",
     "product/create": "/products/create",
     "product-details": id => `/products/details/${id}`,
+
+    "delete-product": id => `/products/delete/${id}`,
 }
 
 export const authApis = () => {

@@ -111,7 +111,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
         // Set default role as CUSTOMER
-        Role customerRole = roleRepository.findByName("ROLE_USER")
+        Role customerRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
         newUser.setRoles(Set.of(customerRole));
         return userRepository.save(newUser);

@@ -30,6 +30,14 @@ public class ProductController {
                 .build();
     }
 
+    @GetMapping("/filter-products")
+    public ApiResponse<List<ProductResponse>> getFilterProduct(@RequestParam boolean sex,
+                                                               @RequestParam String typeNameProduct){
+        return ApiResponse.<List<ProductResponse>>builder()
+                .result(productService.getFilterProductBySexAndTypeNameProduct(sex, typeNameProduct))
+                .build();
+    }
+
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProductResponse> createProduct(@ModelAttribute ProductRequest request,
                                                       @RequestParam("images") @Valid
@@ -39,5 +47,12 @@ public class ProductController {
                 .build();
     }
 
+    @DeleteMapping("/delete/{productId}")
+    public ApiResponse<Void> delete(@PathVariable String productId){
+        productService.delete(productId);
+        return ApiResponse.<Void>builder()
+                .message("Product deleted")
+                .build();
+    }
 
 }

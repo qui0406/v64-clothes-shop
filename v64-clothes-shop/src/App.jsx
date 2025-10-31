@@ -20,10 +20,16 @@ import BagProduct from "./components/Products/BagProduct"
 import HatProduct from "./components/Products/HatProduct"
 import MaskProduct from "./components/Products/MaskProduct"
 
+import ProductManage from "./components/Staff/ManageProduct"
+import OrderManage from "./components/Staff/ManageOrder"
+import Statistics from "./components/Staff/Statistic"
+
 
 import Cart from "./components/Cart"
 import WishList from "./components/WishList"
 import ProductDetails from "./components/Products/ProductDetails"
+
+import Orders from "./components/Orders/Orders"
 
 import { MyDispatchContext, MyUserContext } from "./configs/MyContexts";
 import { authApis, endpoints } from "./configs/APIs";
@@ -31,6 +37,8 @@ import cookie from "react-cookies";
 import { useEffect } from "react";
 import { useReducer } from "react";
 import MyUserReducer from "./reducer/MyUserReducer";
+
+import AgentXChat from "./components/AI/AgentXChat";
 
 
 function App() {
@@ -41,7 +49,8 @@ function App() {
       if (token !== undefined) {
         try {
           const res = await authApis().get(endpoints['my-profile']);
-          dispatch({ type: "login", payload: res.data });
+          console.log("Thông tin user từ token", res.data.result);
+          dispatch({ type: "login", payload: res.data.result });
         } catch (err) {
           console.error("Không thể lấy thông tin user từ token", err);
           cookie.remove("token");
@@ -72,13 +81,20 @@ function App() {
             <Route path="/collections/non-jeans" element= {<HatProduct />} />
             <Route path="/collections/khau-trang" element= {<MaskProduct />} />
 
+            <Route path="/checkouts/:id" element = {<Orders />} />
+
             <Route path="/cart" element= {<Cart />} />
             <Route path="/wishlist" element= {<WishList/>} />
 
             <Route path="/product-details/:id" element = {<ProductDetails />} />
-          </Routes>
 
-          <Footer />
+
+            <Route path="/product/manage" element = {<ProductManage />} />
+            <Route path="/product/orders" element = {<OrderManage />} />
+            <Route path="/product/statistics" element = {<Statistics />} />
+          </Routes>
+          {user?.roles?.some(role => role.name === "USER") && <AgentXChat />}
+          <AgentXChat />
         </BrowserRouter>
       </MyDispatchContext.Provider>
     </MyUserContext.Provider >

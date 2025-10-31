@@ -27,7 +27,7 @@ const ProductListingPage = () => {
   const [showCartNotification, setShowCartNotification] = useState(false);
   const navigate = useNavigate();
 
-  const [products, setProducts1] = useState([]);
+  const [products, setProducts] = useState([]);
   const [filters , setTypeProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -39,7 +39,7 @@ const ProductListingPage = () => {
 
       if (res.status === 200 || res.status === 201) {
         const result = res.data?.result || [];
-        setProducts1(result); 
+        setProducts(result); 
         console.log("Products fetched:", res.data.result);
       } else {
         console.error("Failed to fetch products:", res.statusText);
